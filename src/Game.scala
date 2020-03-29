@@ -4,7 +4,7 @@ import java.util.Calendar
 //object Game extends App{
 object Game{
   def main(args: Array[String]): Unit = {
-    println("Hola mundo")
+    //println("Hola mundo")
     //val row = null :: null :: null :: null :: null :: null :: null :: null :: null :: Nil
     val row = List.fill(9)(null)
     //val tablero = row :: row :: row :: row :: row :: row :: row :: row :: row :: Nil
@@ -145,5 +145,4 @@ object Game{
       false
   }
   
-  //Comprobar si una fila, a partir de una posición 
 }
