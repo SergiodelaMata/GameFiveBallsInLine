@@ -36,6 +36,13 @@ object Game{
       getValueList(pos-1, lista.tail)
   }
   
+  //Devuelve la fila con la que se está trabajando
+  def getFila(posX: Int, tablero: List[List[String]]): List[String] = {
+    if(posX == 0)
+      tablero.head
+      getFila(posX - 1, tablero.tail)
+  }
+  
   //Obtención de un número random en un intervalo
   def random(min:Int, max:Int):Int = { 
     val now = Calendar.getInstance()
@@ -108,4 +115,35 @@ object Game{
   {
   	paintTablero(posX,posY,tablero,color)
   }
+  
+  //Permite obtener el número de cambios en el tablero
+  def getCambiosTablero(tablero1: List[List[String]], tablero2: List[List[String]], counter: Int): Int = {
+    if(tablero1.isEmpty)
+      getCambiosTablero(tablero1.tail, tablero2, getCambiosFilaTablero(tablero1.head, tablero2.head, counter))
+      counter
+  }
+
+
+  //Permite obtener el número de cambios en una fila del tablero
+  def getCambiosFilaTablero(lista1: List[String], lista2: List[String], counter: Int): Int = {
+    if(lista1.isEmpty)
+      getCambiosFilaTablero(lista1.tail, lista2.tail, setValorContador(lista1.head, lista2.head, counter))
+      counter
+  }
+  
+  //Permite ajustar el valor del contador si es necesario
+  def setValorContador(value1: String, value2: String, counter: Int): Int = {
+    if(isEqual(value1, value2))
+        counter + 1
+        counter
+  }
+  
+  //Compara dos elementos son iguales
+  def isEqual(value1: String, value2: String): Boolean = {
+    if(value1.equals(value2))
+      true
+      false
+  }
+  
+  //Comprobar si una fila, a partir de una posición 
 }
