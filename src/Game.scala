@@ -7,29 +7,39 @@ object Game{
     //println("Hola mundo")
     //val row = null :: null :: null :: null :: null :: null :: null :: null :: null :: Nil
     val row = List.fill(9)(null)
-    //val tablero = row :: row :: row :: row :: row :: row :: row :: row :: row :: Nil
-    val tablero = List.fill(9)(row)
-    val colores = "A" :: "N" :: "R" :: "V" :: "M" :: "G" :: Nil //Colores de las bolas
-    //println(getCambiosTablero(tablero, List.fill(9)(List.fill(9)("1")),0))
-    //println(getValueListOfLists(1,1,tablero))
-    //println(paintTablero(1,1,tablero, "R"))
-    //println(paintTablero(4,4,tablero, "R"))
-    /*println(colores(0))
-    println(colores(1))
-    println(colores(2))
-    println(colores(3))
-    println(colores(4))
-    println(colores(5))
+    //val matrix = row :: row :: row :: row :: row :: row :: row :: row :: row :: Nil
+    val matrix = List.fill(9)(row)
+    val colors = "A" :: "N" :: "R" :: "V" :: "M" :: "G" :: Nil //colors de las bolas
+    //println(getMatrixChanges(matrix, List.fill(9)(List.fill(9)("1")),0))
+    //println(getValueListOfLists(1,1,matrix))
+    //println(paintMatrix(1,1,matrix, "R"))
+    //println(paintMatrix(4,4,matrix, "R"))
+    /*println(colors(0))
+    println(colors(1))
+    println(colors(2))
+    println(colors(3))
+    println(colors(4))
+    println(colors(5))
     println(random(0,9))*/
-    println(getPosicionesLibres(tablero, 0))
-    val posInicial = pedirPosInicial(tablero)
-    val posFinal = pedirPosFinal(tablero)
-    //println(getValueListOfLists(1,1, tablero))
+    //println(getListFreePositions(matrix, 0))
+    //println(containPosition(List(List(1,1), List(1,2)), List(1,3)))
+    //println(getBolasRow(List(1,1), List("B","B","B","B","B","B","B","B","B")))
+    //println(getBolasListaRow(List(1,1), List("B","B","B","B","B","B","B","B","B")))
+    //println(getBallsColumn(List(1,1), List.fill(9)(List.fill(9)("B"))))
+    //println(List.fill(9)(List.fill(9)("B")).length)
+    //println(getListPosDiagonals(List.fill(9)(List.fill(9)("B")), 0, Nil))
+    //println(getListPosDiagonals(List.fill(9)(List.fill(9)("B")), 0, Nil).length)
+    //println(introduceDiagonal(List(List(1,1), List(1,2), List(1,2), List(1,2), List(1,2)), Nil))
+    println(getChanges(List(0,0), List.fill(9)(List.fill(9)("B"))))
+    println(getChanges(List(0,0), List.fill(9)(List.fill(9)("B"))).length)
+    val posInicial = pedirPosInicial(matrix)
+    val posFinal = pedirPosFinal(matrix)
+    //println(getValueListOfLists(1,1, matrix))
   }
   
   //Devuelve el valor de una posición de una lista de listas de strings
-  def getValueListOfLists(posX: Int, posY: Int, tablero: List[List[String]]): String = {
-    getValueList(posY, tablero(posX))
+  def getValueListOfLists(posX: Int, posY: Int, matrix: List[List[String]]): String = {
+    getValueList(posY, matrix(posX))
   }
   
   //Devuelve el valor de una posición de una lista de strings
@@ -38,8 +48,8 @@ object Game{
   }
   
   //Devuelve la fila con la que se está trabajando
-  def getFila(posX: Int, tablero: List[List[String]]): List[String] = {
-    tablero(posX)
+  def getRow(posX: Int, matrix: List[List[String]]): List[String] = {
+    matrix(posX)
   }
   
   //Obtención de un número random en un intervalo
@@ -53,22 +63,22 @@ object Game{
   }
 
   //Saber si una casilla se encuentra o no vacía
-  def comprobarIsEmptyPos(x: Int, y: Int, tablero: List[List[String]]):Boolean = {
-    val result = tablero(x)(y).!=(null)
+  def isEmptyPosListOfLists(x: Int, y: Int, matrix: List[List[String]]):Boolean = {
+    val result = matrix(x)(y).!=(null)
     if(result) false
     else true
   }
   
   //Pide las coordenadas de la posición inicial
-  def pedirPosInicial(tablero: List[List[String]]):List[Int] = {
+  def pedirPosInicial(matrix: List[List[String]]):List[Int] = {
     println("Introduce la posión inicial en la coordenada X:")
     val posX = scala.io.StdIn.readInt()
     println("Introduce la posión inicial en la coordenada Y:")
     val posY = scala.io.StdIn.readInt()
-    if(posX < 0 || posX > 8 || posY < 0 || posY > 8 || !comprobarIsEmptyPos(posX, posY, tablero))
+    if(posX < 0 || posX > 8 || posY < 0 || posY > 8 || !isEmptyPosListOfLists(posX, posY, matrix))
     {
       println("Posición inválida. Introduzca una posición válida.")
-      pedirPosInicial(tablero: List[List[String]])
+      pedirPosInicial(matrix: List[List[String]])
     }
     else
     {
@@ -77,15 +87,15 @@ object Game{
   }
   
   //Pide las coordenadas de la posición final
-  def pedirPosFinal(tablero: List[List[String]]):List[Int] = {
+  def pedirPosFinal(matrix: List[List[String]]):List[Int] = {
     println("Introduce la posión final en la coordenada X:")
     val posX = scala.io.StdIn.readInt()
     println("Introduce la posión final en la coordenada Y:")
     val posY = scala.io.StdIn.readInt()
-    if(posX < 0 || posX > 8 || posY < 0 || posY > 8 || comprobarIsEmptyPos(posX, posY, tablero))
+    if(posX < 0 || posX > 8 || posY < 0 || posY > 8 || isEmptyPosListOfLists(posX, posY, matrix))
     {
       println("Posición inválida. Introduzca una posición válida.")
-      pedirPosFinal(tablero: List[List[String]])
+      pedirPosFinal(matrix: List[List[String]])
     }
     else
     {
@@ -94,56 +104,56 @@ object Game{
   }
   
   //Rellena el tablero con tantas bolas que se ha indicado en posiciones vacías
-  def rellenarTablero(numBolas: Int, tablero: List[List[String]], colores : List[String]): List[List[String]] = {
-    if(numBolas != 0) rellenarTablero(numBolas - 1, rellenarPosicionAleatorio(tablero, getValueList(random(0, colores.length), colores)), colores)
-    else tablero
+  def fillMatrix(numBolas: Int, matrix: List[List[String]], colors : List[String]): List[List[String]] = {
+    if(numBolas != 0) fillMatrix(numBolas - 1, fillRandomPos(matrix, getValueList(random(0, colors.length), colors)), colors)
+    else matrix
   }
   
   //Rellena una posición del tablero de forma aleatoria
-  def rellenarPosicionAleatorio(tablero: List[List[String]], color : String): List[List[String]] = {
-    val listaPosicionesVacias = getPosicionesLibres(tablero, 0)
-    val posicion = listaPosicionesVacias(random(0, listaPosicionesVacias.size))
-    val posX = posicion(0)
-    val posY = posicion(1)
+  def fillRandomPos(matrix: List[List[String]], color : String): List[List[String]] = {
+    val listPosEmpty = getListFreePositions(matrix, 0)
+    val position = listPosEmpty(random(0, listPosEmpty.size))
+    val posX = position(0)
+    val posY = position(1)
     //val posX = random(0,9)
     //val posY = random(0,9)
-    if(comprobarIsEmptyPos(posX, posY, tablero)) paintTablero(posX, posY, tablero, color)
-    else rellenarPosicionAleatorio(tablero, color)
+    if(isEmptyPosListOfLists(posX, posY, matrix)) paintMatrix(posX, posY, matrix, color)
+    else fillRandomPos(matrix, color)
   }
   
   //Pinta una posición de acuerdo a todo el tablero
-  def paintTablero(posX: Int, posY: Int, tablero: List[List[String]], color : String): List[List[String]] = {
-    if(posX.!=(0)) tablero.head :: paintTablero(posX - 1, posY, tablero.tail, color)
-    else paintFila(posY, tablero.head, color) :: tablero.tail
+  def paintMatrix(posX: Int, posY: Int, matrix: List[List[String]], color : String): List[List[String]] = {
+    if(posX.!=(0)) matrix.head :: paintMatrix(posX - 1, posY, matrix.tail, color)
+    else paintRow(posY, matrix.head, color) :: matrix.tail
   }
   
   //Pinta una posición de acuerdo a una fila del tablero
-  def paintFila(posY: Int, lista: List[String], color : String): List[String] = {
-    if(posY.!=(0)) lista.head :: paintFila(posY - 1, lista.tail, color)
+  def paintRow(posY: Int, lista: List[String], color : String): List[String] = {
+    if(posY.!=(0)) lista.head :: paintRow(posY - 1, lista.tail, color)
     else color :: lista.tail
   }
   
   //Rellena una posición del tablero
-  def rellenarPosicionNormal(posX: Int, posY: Int, tablero: List[List[String]], color : String): List[List[String]] = 
+  def fillNormalPosition(posX: Int, posY: Int, matrix: List[List[String]], color : String): List[List[String]] = 
   {
-  	paintTablero(posX,posY,tablero,color)
+  	paintMatrix(posX,posY,matrix,color)
   }
   
   //Permite obtener el número de cambios en el tablero
-  def getCambiosTablero(tablero1: List[List[String]], tablero2: List[List[String]], counter: Int): Int = {
-    if(tablero1.isEmpty) counter
-    else getCambiosTablero(tablero1.tail, tablero2, getCambiosFilaTablero(tablero1.head, tablero2.head, counter))
+  def getMatrixChanges(matrix1: List[List[String]], matrix2: List[List[String]], counter: Int): Int = {
+    if(matrix1.isEmpty) counter
+    else getMatrixChanges(matrix1.tail, matrix2, getChangexRowMatrix(matrix1.head, matrix2.head, counter))
   }
 
 
   //Permite obtener el número de cambios en una fila del tablero
-  def getCambiosFilaTablero(lista1: List[String], lista2: List[String], counter: Int): Int = {
+  def getChangexRowMatrix(lista1: List[String], lista2: List[String], counter: Int): Int = {
     if(lista1.isEmpty) counter
-    else getCambiosFilaTablero(lista1.tail, lista2.tail, setValorContador(lista1.head, lista2.head, counter))
+    else getChangexRowMatrix(lista1.tail, lista2.tail, setValueCounter(lista1.head, lista2.head, counter))
   }
   
   //Permite ajustar el valor del contador si es necesario
-  def setValorContador(value1: String, value2: String, counter: Int): Int = {
+  def setValueCounter(value1: String, value2: String, counter: Int): Int = {
     if(!isEqual(value1, value2)) counter + 1
     else counter
   }
@@ -154,101 +164,320 @@ object Game{
     else true
   }
   
-  //Devuelve el tablero que se va a utilizar para el siguiente paso del juego
-  def getTableroNextPaso(tableroInicial: List[List[String]], tableroFinal: List[List[String]], colores: List[String]): List[List[String]] = {
-    if(getCambiosTablero(tableroInicial, tableroFinal, 0).!=(2)) tableroFinal
-    else rellenarTablero(3, tableroFinal, colores)
+  //Devuelve el matrix que se va a utilizar para el siguiente paso del juego
+  def getMatrixNextStep(initialMatrix: List[List[String]], finalMatrix: List[List[String]], colors: List[String]): List[List[String]] = {
+    if(getMatrixChanges(initialMatrix, finalMatrix, 0).!=(2)) finalMatrix
+    else fillMatrix(3, finalMatrix, colors)
   }
   
   //Realiza la suma de puntos del nuevo paso
-  def sumarPuntos(tableroInicial:List[List[String]], tableroFinal:List[List[String]], puntos: Int):Int ={
-    val bolasEliminadas=getCambiosTablero(tableroInicial,tableroFinal,0)
+  def addPoints(initialMatrix:List[List[String]], finalMatrix:List[List[String]], puntos: Int):Int = {
+    val bolasEliminadas=getMatrixChanges(initialMatrix,finalMatrix,0)
     if(bolasEliminadas >= 5) puntos + bolasEliminadas*75
   	else puntos
   }
   
-  //Realiza los cambios necesarios en una fila o no dependiendo del número de bolas seguidas de un color
-  def modificarFila(posicion: Int, fila: List[String]): List[String] = {
-    if(getBolasFila(posicion, fila) >= 5)limpiarFila(posicion, fila)
-    else fila
+  //Define si una posición se encuentra en una lista de posiciones
+  def containPosition(listaposiciones: List[List[Int]], position: List[Int]): Boolean = {
+    //println("QUACK")
+    //println(listaposiciones)
+    //println(position)
+    if(listaposiciones.!=(List(List())) && listaposiciones.!=(List()))
+    {
+      //Posición estudiada de la lista es distinta a la posición estudiada
+      if((listaposiciones.head).head.!=(position.head) || ((listaposiciones.head).tail).head.!=((position.tail).head)) containPosition(listaposiciones.tail, position)
+      //Posición estudiada de la lista es igual a la posición estudiada
+      else true
+    }
+    else false
   }
   
-  //Realiza la limpieza de las bolas seguidas de un mismo color de una fila a partir de una posición
-  def limpiarFila(posicion: Int, fila: List[String]): List[String] = {
-    posicion match {
-      case 0 => limpiarFilaIzqDer(posicion + 1, fila, getValueList(posicion, fila))
-      case 8 => limpiarFilaDerIzq(posicion - 1, fila, getValueList(posicion, fila))
-      case _ => limpiarFilaIzqDer(posicion + 1, limpiarFilaDerIzq(posicion - 1, fila, getValueList(posicion, fila)), getValueList(posicion, fila))
-    }
-  }
-
-  //Realiza la limpieza de las bolas seguidas de un mismo color de una fila de izquierda a derecha 
-  def limpiarFilaIzqDer(posicion:Int, fila: List[String], color: String): List[String] = {
-    if(posicion < 9)
-    {
-      if(getValueList(posicion,fila).!=(color)) fila
-      else limpiarFilaIzqDer(posicion + 1, paintFila(posicion, fila, null), color)
-    }
-    else fila
+  //Devuelve la lista de posiciones que se deben modificar
+  def getChanges(position: List[Int], matriz: List[List[String]]): List[List[Int]] = {
+    val listaModificacionesFilaYColumna = List(position) ::: getChangesRow(position, matriz(position.head)) ::: getChangesColumn(position, matriz)
+    //List(position) ::: listaModificacionesFilaYColumna 
+    
+    getListPosDiagonals(matriz, position.head + position.tail.head * 9,listaModificacionesFilaYColumna)
   }
   
-  //Realiza la limpieza de las bolas seguidas de un mismo color de una fila de derecha a izquierda
-  def limpiarFilaDerIzq(posicion:Int, fila: List[String], color: String): List[String] = {
-    if(posicion >= 0)
-    {
-      if(getValueList(posicion,fila).!=(color)) fila
-      else limpiarFilaDerIzq(posicion - 1, paintFila(posicion, fila, null), color)
-    }
-    else fila
+  
+  
+  //Devuelve la lista de posiciones que han de modificarse de una fila en relación del número de bolas seguidas de un color
+  def getChangesRow(position: List[Int], fila: List[String]): List[List[Int]] = {
+    if(getBallsRow(position, fila) >= 5)getBolasListaFila(position, fila)
+    else Nil
   }
   
   //Devuelve el número de bolas seguidas de un mismo color a partir de una posición en una fila
-  def getBolasFila(posicion: Int, fila: List[String]): Int = {
-    posicion match {
-      case 0 => 1 + getBolasFilaIzqDer(posicion + 1, fila, getValueList(posicion, fila))
-      case 8 => 1 + getBolasFilaDerIzq(posicion - 1, fila, getValueList(posicion, fila))
-      case _ => getBolasFilaIzqDer(posicion + 1, fila, getValueList(posicion, fila)) + 1 + getBolasFilaDerIzq(posicion - 1, fila, getValueList(posicion, fila))
+  def getBallsRow(position: List[Int], fila: List[String]): Int = {
+    (position.tail).head match { //Se compara el número de columna
+      case 0 => 1 + getBallsRowIzqDer((position.tail).head + 1, fila, getValueList((position.tail).head, fila))
+      case 8 => 1 + getBallsRowDerIzq((position.tail).head - 1, fila, getValueList((position.tail).head, fila))
+      case _ => getBallsRowIzqDer((position.tail).head + 1, fila, getValueList((position.tail).head, fila)) + 1 + getBallsRowDerIzq((position.tail).head - 1, fila, getValueList((position.tail).head, fila))
     }
   }
   
   //Devuelve el número de bolas seguidas de un mismo color de izquierda a derecha en una fila
-  def getBolasFilaIzqDer(posicion: Int, fila: List[String], color: String): Int = {
-    if(posicion < 9) //No supera el margen de la derecha
+  def getBallsRowIzqDer(position: Int, fila: List[String], color: String): Int = {
+    if(position < 9) //No supera el margen de la derecha
     {
       //Comprobar si tienen el mismo color
-      if(getValueList(posicion, fila).!=(color)) 0
-      else 1 + getBolasFilaIzqDer(posicion + 1, fila, color)
+      if(getValueList(position, fila).!=(color)) 0
+      else 1 + getBallsRowIzqDer(position + 1, fila, color)
     }
     else 0 //Fuera de rango
   }
   
   //Devuelve el número de bolas seguidas de un mismo color de derecha a izquierda en una fila
-  def getBolasFilaDerIzq(posicion: Int, fila: List[String], color: String): Int = {
-    if(posicion >= 0) //No supera el margen de la izquierda
+  def getBallsRowDerIzq(position: Int, fila: List[String], color: String): Int = {
+    if(position >= 0) //No supera el margen de la izquierda
     {
       //Comprobar si tienen el mismo color
-      if(getValueList(posicion, fila).!=(color)) 0
-      else 1 + getBolasFilaIzqDer(posicion - 1, fila, color)
+      if(getValueList(position, fila).!=(color)) 0
+      else 1 + getBallsRowDerIzq(position - 1, fila, color)
     }
     else 0 //Fuera de rango
   }
   
-  //Ajusta los nuevos valores para una fila del tablero
-  def setFila(posicion: Int, fila: List[String], tablero: List[List[String]]): List[List[String]] = {
-    if(posicion.!=(0)) tablero.head :: setFila(posicion - 1, fila, tablero.tail)
-    else fila :: tablero.tail
+  //Devuelve la lista de las posiciones de las bolas seguidas en una fila de un mismo color
+  def getBolasListaFila(position: List[Int], fila: List[String]): List[List[Int]]={
+    (position.tail).head match { //Se compara con respecto a la columna de la posición
+      case 0 => getBolasListaFilaIzqDer(List(position.head,(position.tail).head + 1), fila, getValueList((position.tail).head, fila))
+      case 8 => getBolasListaFilaDerIzq(List(position.head,(position.tail).head - 1), fila, getValueList((position.tail).head, fila))
+      case _ => getBolasListaFilaIzqDer(List(position.head,(position.tail).head + 1), fila, getValueList((position.tail).head, fila)) ::: getBolasListaFilaDerIzq(List(position.head,(position.tail).head - 1), fila, getValueList((position.tail).head, fila))
+    }
   }
   
-  def getPosicionesLibres(tablero: List[List[String]], posicion: Int): List[List[Int]] = {
-    val posX = posicion%9
-    val posY = posicion/9
+  //Devuelve la lista de las posiciones de las bolas seguidas en una fila de un mismo color de izquierda a derecha
+  def getBolasListaFilaIzqDer(position: List[Int], fila: List[String], color: String): List[List[Int]]={
+    if((position.tail).head < 9)
+    {
+      if(getValueList((position.tail).head,fila).!=(color)) Nil
+      else List(position) ::: getBolasListaFilaIzqDer(List(position.head,(position.tail).head + 1), fila, color)
+    }
+    else Nil
+  }
+  
+  //Devuelve la lista de las posiciones de las bolas seguidas en una fila de un mismo color de derecha a izquierda
+  def getBolasListaFilaDerIzq(position: List[Int], fila: List[String], color: String): List[List[Int]]={
+    if((position.tail).head >= 0)
+    {
+      if(getValueList((position.tail).head,fila).!=(color)) Nil
+      else List(position) ::: getBolasListaFilaDerIzq(List(position.head,(position.tail).head - 1), fila, color)
+    }
+    else Nil
+  }
+  
+  //Devuelve la lista de posiciones que han de modificarse de una columna en relación del número de bolas seguidas de un color
+  def getChangesColumn(position: List[Int], matriz: List[List[String]]): List[List[Int]] = {
+    if(getBallsColumn(position, matriz) >= 5)getBolasListaColumna(position, matriz)
+    else Nil
+  }
+  
+  //Devuelve el número de bolas seguidas de un mismo color a partir de una posición en una columna
+  def getBallsColumn(position: List[Int], matriz: List[List[String]]): Int = {
+    position.head match { //Se compara el número de Row
+      case 0 => 1 + getBallsColUpDown(List(position.head + 1,(position.tail).head), matriz, getValueListOfLists(position.head, (position.tail).head, matriz))
+      case 8 => 1 + getBallsColDownUp(List(position.head - 1,(position.tail).head), matriz, getValueListOfLists(position.head, (position.tail).head, matriz))
+      case _ => getBallsColUpDown(List(position.head + 1,(position.tail).head), matriz, getValueListOfLists(position.head, (position.tail).head, matriz)) + 1 + getBallsColDownUp(List(position.head - 1,(position.tail).head), matriz, getValueListOfLists(position.head, (position.tail).head, matriz))
+    }
+  }
+  
+  //Devuelve el número de bolas seguidas de un mismo color de arriba a abajo en una columna
+  def getBallsColUpDown(position: List[Int], matriz: List[List[String]], color: String): Int = {
+    if(position.head < 9) //No supera el margen inferior
+    {
+      //Comprobar si tienen el mismo color
+      if(getValueListOfLists(position.head, (position.tail).head, matriz).!=(color)) 0
+      else 1 + getBallsColUpDown(List(position.head + 1,(position.tail).head), matriz, color)
+    }
+    else 0 //Fuera de rango
+  }
+  
+  //Devuelve el número de bolas seguidas de un mismo color de abajo a arriba en una columna
+  def getBallsColDownUp(position: List[Int], matriz: List[List[String]], color: String): Int = {
+    if(position.head >= 0) //No supera el margen superior
+    {
+      //Comprobar si tienen el mismo color
+      if(getValueListOfLists(position.head, (position.tail).head, matriz).!=(color)) 0
+      else 1 + getBallsColDownUp(List(position.head - 1,(position.tail).head), matriz, color)
+    }
+    else 0 //Fuera de rango
+  }
+  
+  //Devuelve la lista de las posiciones de las bolas seguidas en una columna de un mismo color
+  def getBolasListaColumna(position: List[Int], matriz: List[List[String]]): List[List[Int]]={
+    (position.tail).head match { //Se compara con respecto a la columna de la posición
+      case 0 => getBallsListColUpDown(List(position.head + 1,(position.tail).head), matriz, getValueListOfLists(position.head, (position.tail).head, matriz))
+      case 8 => getBallsListColDownUp(List(position.head - 1,(position.tail).head), matriz, getValueListOfLists(position.head, (position.tail).head, matriz))
+      case _ => getBallsListColUpDown(List(position.head + 1,(position.tail).head), matriz, getValueListOfLists(position.head, (position.tail).head, matriz)) ::: getBallsListColDownUp(List(position.head - 1,(position.tail).head), matriz, getValueListOfLists(position.head, (position.tail).head, matriz))
+    }
+  }
+  
+  //Devuelve la lista de las posiciones de las bolas seguidas en una columna de un mismo color de arriba a abajo
+  def getBallsListColUpDown(position: List[Int], matriz: List[List[String]], color: String): List[List[Int]]={
+    if((position.tail).head < 9 && position.head < 9)
+    {
+      if(getValueListOfLists(position.head, (position.tail).head, matriz).!=(color)) Nil
+      else List(position) ::: getBallsListColUpDown(List(position.head + 1,(position.tail).head), matriz, color)
+    }
+    else Nil
+  }
+  
+  //Devuelve la lista de las posiciones de las bolas seguidas en una columna de un mismo color de abajo a arriba
+  def getBallsListColDownUp(position: List[Int], matriz: List[List[String]], color: String): List[List[Int]]={
+    if((position.tail).head >= 0 && position.head >= 0)
+    {
+      if(getValueListOfLists(position.head, (position.tail).head, matriz).!=(color)) Nil
+      else List(position) ::: getBallsListColDownUp(List(position.head - 1,(position.tail).head), matriz, color)
+    }
+    else Nil
+  }
+  //Devuelve la lista de las posiciones de las bolas seguidas en cada una de las diagonales de todo el tablero
+  def getListPosDiagonals(matrix:List[List[String]], position:Int, listPositions : List[List[Int]]):List[List[Int]]={
+    val coordX = position % 9
+    val coordY = position / 9
+    if(position < 81){
+      if(isEmptyPosListOfLists(coordX, coordY, matrix)) getListPosDiagonals(matrix,position+1, listPositions)
+      else
+      {
+        val diagonalRight1 = getListPosDiagonalRight(matrix,coordX,coordY, getValueListOfLists(coordX,coordY,matrix),false)
+        /*
+         * 1 1 0
+         * 0 1 1
+         * 0 0 1
+         * */
+        val diagonalRight2 = getListPosDiagonalRight(matrix,coordX,coordY, getValueListOfLists(coordX,coordY,matrix),true)
+        /*
+         * 1 0 0
+         * 1 1 0
+         * 0 1 1
+         * */
+        val diagonalLeft1 = getListPosDiagonalLeft(matrix,coordX,coordY, getValueListOfLists(coordX,coordY,matrix),false)
+        /*
+         * 0 1 1
+         * 1 1 0
+         * 1 0 0
+         * */
+        val diagonalLeft2 = getListPosDiagonalLeft(matrix,coordX,coordY, getValueListOfLists(coordX,coordY,matrix),true)
+        /*
+         * 0 0 1
+         * 0 1 1
+         * 1 1 0
+         * */
+        val listPos = introduceDiagonal(diagonalLeft2,introduceDiagonal(diagonalLeft1,introduceDiagonal(diagonalRight2,introduceDiagonal(diagonalRight1, listPositions))))
+        getListPosDiagonals(matrix, position+1, listPos)
+      }  
+    }
+    else listPositions
+  }
+  //Devuelve la lista de posiciones que se encuentran en una de las diagonales que van a derechas
+  def getListPosDiagonalRight(matrix:List[List[String]],x: Int, y: Int, color: String,situation: Boolean): List[List[Int]]={
+    if(situation) //Posición estudiada es la que se encuentra hacia abajo
+    {
+      //Considera que la posición no está vacía y es del mismo color que el pasado por parámetro
+      if(!isEmptyPosBelow(matrix, x, y+1) && isEqual(getValueListOfLists(x,y+1,matrix), color))
+      {
+        getListPosDiagonalRight(matrix,x,y+1,color,changeSituation(situation)):::List(List(x,y+1))
+      }
+      else Nil
+    }
+    else //Posición estudiada es la que se encuentra hacia la derecha
+    {
+      //Considera que la posición no está vacía y es del mismo color que el pasado por parámetro
+      if(!isEmptyPosRight(matrix, x+1, y) && isEqual(getValueListOfLists(x+1,y,matrix), color))
+      {
+        getListPosDiagonalRight(matrix,x+1,y,color,changeSituation(situation)):::List(List(x+1,y))
+      }
+      else Nil
+    }
+  }
+  //Devuelve la lista de posiciones que se encuentran en una de las diagonales que van a izquierdas
+  def getListPosDiagonalLeft(matrix:List[List[String]],x: Int, y: Int, color: String,situation: Boolean): List[List[Int]]={
+    if(situation) //Posición estudiada es la que se encuentra hacia abajo
+    {
+      //Considera que la posición no está vacía y es del mismo color que el pasado por parámetro
+      if(!isEmptyPosBelow(matrix, x, y+1) && isEqual(getValueListOfLists(x,y+1,matrix), color))
+      {
+        getListPosDiagonalLeft(matrix,x,y+1,color,changeSituation(situation)):::List(List(x,y+1))
+      }
+      else Nil
+    }
+    else //Posición estudiada es la que se encuentra hacia la izquierda
+    {
+      //Considera que la posición no está vacía y es del mismo color que el pasado por parámetro
+      if(!isEmptyPosLeft(matrix, x-1, y) && isEqual(getValueListOfLists(x-1,y,matrix), color))
+      {
+        getListPosDiagonalLeft(matrix,x-1,y,color,changeSituation(situation)):::List(List(x-1,y))
+      }
+      else Nil
+    }
+  }
+  //Invierte el estado de la situación
+  def changeSituation(situation: Boolean): Boolean={
+    if(situation) false
+    else true
+  }
+  //Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está por debajo de otra
+  def isEmptyPosBelow(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
+    if(coordY<9){
+      if(isEmptyPosListOfLists(coordX,coordY,matrix))
+      {
+        true
+       }      
+      else false
+    } 
+    else true
+  }
+  //Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está a la derecha de otra
+  def isEmptyPosRight(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
+    if(coordX<9){
+      if(isEmptyPosListOfLists(coordX,coordY,matrix))
+      {
+        true
+      }
+      else false
+    }
+    else true    
+  }
+  //Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está a la izquierda de otra
+  def isEmptyPosLeft(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
+    if(coordX>0){
+      if(isEmptyPosListOfLists(coordX,coordY,matrix))
+      {
+        true
+      }else false
+    }
+    else true    
+  }
+  //Une dos listas posiciones sin valores repetidos
+  def introduceDiagonal(l1: List[List[Int]], l2:List[List[Int]]): List[List[Int]]={
+    //Une dos listas posiciones si el número de posiciones es mayor a 4
+    if(l1.length > 4) introduceDiagonalAux(l1,l2)
+    else l2
+  }
+  //Une dos listas posiciones sin valores repetidos
+  def introduceDiagonalAux(l1: List[List[Int]], l2:List[List[Int]]): List[List[Int]]={
+    //Comprueba si la primera lista está vacía
+    if(l1.!=(List(Nil)) && l1.!=(Nil))
+    {
+      //Comprueba si un elemento se encuentra en una lista y en caso contrario, lo introduce
+      if(!containPosition(l2,l1.head)) introduceDiagonalAux(l1.tail, l2 ::: List(l1.head))
+      else introduceDiagonalAux(l1.tail, l2)
+    }
+    else l2
+  }
+  //Devuelve la lista de las posiciones vacías de la matriz
+  def getListFreePositions(matrix: List[List[String]], position: Int): List[List[Int]] = {
+    val posX = position%9
+    val posY = position/9
     println(List(List(posX, posY)))
-    println(posicion)
-    if(posicion >= 81) List(List())
+    println(position)
+    if(position >= 81) Nil
     else
     {
-      if(comprobarIsEmptyPos(posX, posY, tablero)) List(List(posX, posY)) ::: getPosicionesLibres(tablero, posicion + 1)
-      else getPosicionesLibres(tablero, posicion + 1)
+      if(isEmptyPosListOfLists(posX, posY, matrix)) List(List(posX, posY)) ::: getListFreePositions(matrix, position + 1)
+      else getListFreePositions(matrix, position + 1)
     }
   }
 }
