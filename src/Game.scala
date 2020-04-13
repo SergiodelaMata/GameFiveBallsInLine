@@ -20,6 +20,8 @@ object Game{
       val posFinal = (listPos.tail).head
       val matrixChangePos = paintMatrix(posFinal.head, (posFinal.tail).head, paintMatrix(posInitial.head, (posInitial.tail).head, matrix, "-"), getValueListOfLists(posInitial.head,(posInitial.tail).head,matrix))
       val matrixRemoveLines = paintListPosMatrix(getChanges(posFinal, matrixChangePos),"-",matrixChangePos)
+      //showMatrix(matrixChangePos,0)
+      //showMatrix(matrixRemoveLines,0)
       executeGame(getMatrixNextStep(matrix, matrixRemoveLines,colors),addPoints(matrix, matrixRemoveLines, counter),colors, step+1)
     }
     else counter
@@ -29,7 +31,7 @@ object Game{
   {
     val posInicial = pedirPosInicial(matrix)
     val posFinal = pedirPosFinal(matrix)
-    if(isPath(posInicial,posFinal,matrix)) List(posInicial,posFinal)
+    if(isPath(posInicial,posFinal,matrix,0)) List(posInicial,posFinal)
     else getListPos(matrix)
   }
   //Genera una matriz de posiciones vacías
@@ -114,9 +116,9 @@ object Game{
   }
   //Pide las coordenadas de la posición final
   def pedirPosFinal(matrix: List[List[String]]):List[Int] = {
-    println("Introduce la posión final en la coordenada X:")
+    println("Introduce la posición final en la coordenada X:")
     val posX = scala.io.StdIn.readInt()
-    println("Introduce la posión final en la coordenada Y:")
+    println("Introduce la posición final en la coordenada Y:")
     val posY = scala.io.StdIn.readInt()
     if(posX < 0 || posX > 8 || posY < 0 || posY > 8 || !isEmptyPosListOfLists(posX, posY, matrix))
     {
@@ -129,25 +131,25 @@ object Game{
     }
   }
   //Verifica la existencia de un camino entre dos posiciones
-  def isPath(posInitial: List[Int],posFinal: List[Int], matrix: List[List[String]]): Boolean ={
-    if((!(posInitial.head.!=(posFinal.head) && !((posInitial.tail).head.!=((posFinal.tail).head))))||(isFreePos(posInitial.head, (posInitial.tail).head, matrix) && isFreePos(posFinal.head, (posFinal.tail).head, matrix)))
+  def isPath(posInitial: List[Int],posFinal: List[Int], matrix: List[List[String]],counter: Int): Boolean ={
+    if(counter <150 &&((!(posInitial.head.!=(posFinal.head) && !(!(posInitial.tail).head.!=((posFinal.tail).head))))||(isFreePos(posInitial.head, (posInitial.tail).head, matrix) && isFreePos(posFinal.head, (posFinal.tail).head, matrix))))
     {
-      if(!(posInitial.head.!=(posFinal.head) && !((posInitial.tail).head.!=((posFinal.tail).head))))
+      if(!(posInitial.head.!=(posFinal.head) && !(!(posInitial.tail).head.!=((posFinal.tail).head))))
       {
         true
       }
       else
       {
-        if(isPath(List(posInitial.head,(posInitial.tail).head-1), posFinal,matrix)) true
+        if(isPath(List(posInitial.head,(posInitial.tail).head-1), posFinal,matrix,counter+1)) true
         else
         {
-          if(isPath(List(posInitial.head,(posInitial.tail).head+1), posFinal,matrix)) true
+          if(isPath(List(posInitial.head,(posInitial.tail).head+1), posFinal,matrix,counter+2)) true
           else
           {
-            if(isPath(List(posInitial.head-1,(posInitial.tail).head), posFinal,matrix)) true
+            if(isPath(List(posInitial.head-1,(posInitial.tail).head), posFinal,matrix,counter+3)) true
             else
             {
-              isPath(List(posInitial.head+1,(posInitial.tail).head), posFinal,matrix)
+              isPath(List(posInitial.head+1,(posInitial.tail).head), posFinal,matrix,counter+4)
             }
           }
         }
@@ -157,11 +159,12 @@ object Game{
   }
   //Comprueba si una posición se encuentra libre por algún camino (derecha, izquierda, arriba o abajo)
   def isFreePos(coordX: Int, coordY: Int, matrix: List[List[String]]): Boolean={
-    val posUp = !isOutOfRangePos(coordX,coordY-1) && isEmptyPosUpwards(matrix, coordX,coordY-1)
-    val posDown = !isOutOfRangePos(coordX,coordY+1) && isEmptyPosBelow(matrix, coordX,coordY+1)
-    val posLeft = !isOutOfRangePos(coordX-1,coordY) && isEmptyPosLeft(matrix, coordX-1,coordY)
-    val posRight = !isOutOfRangePos(coordX+1,coordY) && isEmptyPosRight(matrix, coordX+1,coordY)
-    if(posUp || posDown || posLeft || posRight) true
+    if((!isOutOfRangePos(coordX,coordY-1) && isEmptyPosUpDown(matrix, coordX,coordY-1))||(!isOutOfRangePos(coordX,coordY+1) && isEmptyPosUpDown(matrix, coordX,coordY+1))||(!isOutOfRangePos(coordX-1,coordY) && isEmptyPosRightLeft(matrix, coordX-1,coordY))||(!isOutOfRangePos(coordX+1,coordY) && isEmptyPosRightLeft(matrix, coordX+1,coordY))) true
+    /*val posUp = !isOutOfRangePos(coordX,coordY-1) && isEmptyPosUpDown(matrix, coordX,coordY-1)
+    val posDown = !isOutOfRangePos(coordX,coordY+1) && isEmptyPosUpDown(matrix, coordX,coordY+1)
+    val posLeft = !isOutOfRangePos(coordX-1,coordY) && isEmptyPosRightLeft(matrix, coordX-1,coordY)
+    val posRight = !isOutOfRangePos(coordX+1,coordY) && isEmptyPosRightLeft(matrix, coordX+1,coordY)
+    if(posUp || posDown || posLeft || posRight) true*/
     else false
   }
   //Comprueba si una posición se encuentra fuera de rango
@@ -169,37 +172,37 @@ object Game{
     if(coordX < 0 || coordX >= 9 || coordY < 0 || coordY >= 9) true
     else false
   }
-  //Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está por debajo de otra
-  def isEmptyPosBelow(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
-    if(coordY<9){
+  //Comprueba si la posición se encuentra vacía o fuera de rango por encima o por debajo de otra
+  def isEmptyPosUpDown(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
+    if(coordY<9 && coordY>=0){
       if(isEmptyPosListOfLists(coordX,coordY,matrix)) true
       else false
     } 
     else true
   }//Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está por encima de otra
-  def isEmptyPosUpwards(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
+  /*def isEmptyPosUpDown(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
     if(coordY>=0){
       if(isEmptyPosListOfLists(coordX,coordY,matrix)) true
       else false
     } 
     else true
-  }
+  }*/
   //Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está a la derecha de otra
-  def isEmptyPosRight(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
-    if(coordX<9){
+  def isEmptyPosRightLeft(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
+    if(coordX<9 && coordX>=0){
       if(isEmptyPosListOfLists(coordX,coordY,matrix)) true
       else false
     }
     else true    
   }
   //Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está a la izquierda de otra
-  def isEmptyPosLeft(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
+  /*def isEmptyPosRightLeft(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
     if(coordX>=0){
       if(isEmptyPosListOfLists(coordX,coordY,matrix)) true
       else false
     }
     else true    
-  }
+  }*/
   //Rellena de forma aleatoria el tablero con un número de bolas pasado por parámetro
   def fillMatrix(numBolas: Int, matrix: List[List[String]], colors : List[String]): List[List[String]] = {
     if(numBolas != 0) fillMatrix(numBolas - 1, fillRandomPos(matrix, getValueList(random(0, colors.length), colors)), colors)
@@ -239,7 +242,8 @@ object Game{
   }
   //Permite obtener el número de cambios en el tablero
   def getMatrixChanges(matrix1: List[List[String]], matrix2: List[List[String]], position: Int, counter: Int): Int = {
-    val posX = position/9
+    getListFreePositions(matrix2,0).length - getListFreePositions(matrix1,0).length
+    /*val posX = position/9
     val posY = position%9
     if(position >= 81)
     {
@@ -247,7 +251,7 @@ object Game{
       else getMatrixChanges(matrix1,matrix2,position+1,counter+1)
     }
     else counter
-    
+    */
     //if(isEmptyListOfLists(matrix1)) counter
     //else getMatrixChanges(matrix1.tail, matrix2, getChangexRowMatrix(matrix1.head, matrix2.head, counter))
   }
@@ -280,9 +284,10 @@ object Game{
   }*/
   //Devuelve el matrix que se va a utilizar para el siguiente paso del juego
   def getMatrixNextStep(initialMatrix: List[List[String]], finalMatrix: List[List[String]], colors: List[String]): List[List[String]] = {
-    println("Changes")
-    showMatrix(initialMatrix,0)
-    showMatrix(finalMatrix,0)
+    //println("Changes")
+    //showMatrix(initialMatrix,0)
+    //showMatrix(finalMatrix,0)
+    //println(getMatrixChanges(initialMatrix, finalMatrix, 0, 0))
     if(getMatrixChanges(initialMatrix, finalMatrix, 0, 0) >= 5) finalMatrix
     else fillMatrix(3, finalMatrix, colors)
   }
@@ -307,6 +312,7 @@ object Game{
   def getChanges(position: List[Int], matriz: List[List[String]]): List[List[Int]] = {
     //val listaModificacionesFilaYColumna = List(position) ::: getChangesRow(position, matriz(position.head)) ::: getChangesColumn(position, matriz)
     val listaModificacionesFilaYColumna = introducePosition(getChangesRow(position, matriz(position.head)) ::: getChangesColumn(position, matriz), position)
+    println(getListPosDiagonals(matriz, position.head + position.tail.head * 9,listaModificacionesFilaYColumna))
     getListPosDiagonals(matriz, position.head + position.tail.head * 9,listaModificacionesFilaYColumna)
   }
   //Introduce la posición actual si hay más posiciones en la lista de posiciones 
@@ -317,7 +323,7 @@ object Game{
   
   //Devuelve la lista de posiciones que han de modificarse de una fila en relación del número de bolas seguidas de un color
   def getChangesRow(position: List[Int], fila: List[String]): List[List[Int]] = {
-    if(getBallsRow(position, fila) >= 5)getBolasListaFila(position, fila)
+    if(getBallsRow(position, fila) > 4)getBolasListaFila(position, fila)
     else Nil
   }
   //Devuelve el número de bolas seguidas de un mismo color a partir de una posición en una fila
@@ -376,7 +382,7 @@ object Game{
   }
   //Devuelve la lista de posiciones que han de modificarse de una columna en relación del número de bolas seguidas de un color
   def getChangesColumn(position: List[Int], matriz: List[List[String]]): List[List[Int]] = {
-    if(getBallsColumn(position, matriz) >= 5)getBolasListaColumna(position, matriz)
+    if(getBallsColumn(position, matriz) > 4)getBolasListaColumna(position, matriz)
     else Nil
   }
   //Devuelve el número de bolas seguidas de un mismo color a partir de una posición en una columna
@@ -435,36 +441,41 @@ object Game{
   }
   //Devuelve la lista de las posiciones de las bolas seguidas en cada una de las diagonales de todo el tablero
   def getListPosDiagonals(matrix:List[List[String]], position:Int, listPositions : List[List[Int]]):List[List[Int]]={
+    //println("MIAU")
     val coordX = position / 9
     val coordY = position % 9
     if(position < 81){
       if(isEmptyPosListOfLists(coordX, coordY, matrix)) getListPosDiagonals(matrix,position+1, listPositions)
       else
       {
-        val diagonalRight1 = getListPosDiagonalRight(matrix,coordX,coordY, getValueListOfLists(coordX,coordY,matrix),false):::List(List(coordX,coordY))
+        val diagonalRight1 = introducePosition(getListPosDiagonalRight(matrix,coordX+1,coordY, getValueListOfLists(coordX,coordY,matrix),false),List(coordX,coordY))
         /*
          * 1 1 0
          * 0 1 1
          * 0 0 1
          * */
-        val diagonalRight2 = getListPosDiagonalRight(matrix,coordX,coordY, getValueListOfLists(coordX,coordY,matrix),true):::List(List(coordX,coordY))
+        //println(diagonalRight1)
+        val diagonalRight2 = introducePosition(getListPosDiagonalRight(matrix,coordX,coordY+1, getValueListOfLists(coordX,coordY,matrix),true),List(coordX,coordY))
         /*
          * 1 0 0
          * 1 1 0
          * 0 1 1
          * */
-        val diagonalLeft1 = getListPosDiagonalLeft(matrix,coordX,coordY, getValueListOfLists(coordX,coordY,matrix),false):::List(List(coordX,coordY))
+        println(diagonalRight2)
+        val diagonalLeft1 = introducePosition(getListPosDiagonalLeft(matrix,coordX-1,coordY, getValueListOfLists(coordX,coordY,matrix),false),List(coordX,coordY))
         /*
          * 0 1 1
          * 1 1 0
          * 1 0 0
          * */
-        val diagonalLeft2 = getListPosDiagonalLeft(matrix,coordX,coordY, getValueListOfLists(coordX,coordY,matrix),true):::List(List(coordX,coordY))
+        //println(diagonalLeft1)
+        val diagonalLeft2 = introducePosition(getListPosDiagonalLeft(matrix,coordX,coordY+1, getValueListOfLists(coordX,coordY,matrix),true),List(coordX,coordY))
         /*
          * 0 0 1
          * 0 1 1
          * 1 1 0
          * */
+        println(diagonalLeft2)
         val listPos = introduceDiagonal(diagonalLeft2,introduceDiagonal(diagonalLeft1,introduceDiagonal(diagonalRight2,introduceDiagonal(diagonalRight1, listPositions))))
         getListPosDiagonals(matrix, position+1, listPos)
       }  
@@ -476,18 +487,18 @@ object Game{
     if(situation) //Posición estudiada es la que se encuentra hacia abajo
     {
       //Considera que la posición no está vacía y es del mismo color que el pasado por parámetro
-      if(!isEmptyPosBelow(matrix, x, y+1) && isEqual(getValueListOfLists(x,y+1,matrix), color))
+      if(!isEmptyPosUpDown(matrix, x, y) && isEqual(getValueListOfLists(x,y,matrix), color))
       {
-        getListPosDiagonalRight(matrix,x,y+1,color,changeSituation(situation)):::List(List(x,y+1))
+        getListPosDiagonalRight(matrix,x+1,y,color,changeSituation(situation)):::List(List(x,y))
       }
       else Nil
     }
     else //Posición estudiada es la que se encuentra hacia la derecha
     {
       //Considera que la posición no está vacía y es del mismo color que el pasado por parámetro
-      if(!isEmptyPosRight(matrix, x+1, y) && isEqual(getValueListOfLists(x+1,y,matrix), color))
+      if(!isEmptyPosRightLeft(matrix, x, y) && isEqual(getValueListOfLists(x,y,matrix), color))
       {
-        getListPosDiagonalRight(matrix,x+1,y,color,changeSituation(situation)):::List(List(x+1,y))
+        getListPosDiagonalRight(matrix,x,y+1,color,changeSituation(situation)):::List(List(x,y))
       }
       else Nil
     }
@@ -497,18 +508,18 @@ object Game{
     if(situation) //Posición estudiada es la que se encuentra hacia abajo
     {
       //Considera que la posición no está vacía y es del mismo color que el pasado por parámetro
-      if(!isEmptyPosBelow(matrix, x, y+1) && isEqual(getValueListOfLists(x,y+1,matrix), color))
+      if(!isEmptyPosUpDown(matrix, x, y) && isEqual(getValueListOfLists(x,y,matrix), color))
       {
-        getListPosDiagonalLeft(matrix,x,y+1,color,changeSituation(situation)):::List(List(x,y+1))
+        getListPosDiagonalLeft(matrix,x-1,y,color,changeSituation(situation)):::List(List(x,y))
       }
       else Nil
     }
     else //Posición estudiada es la que se encuentra hacia la izquierda
     {
       //Considera que la posición no está vacía y es del mismo color que el pasado por parámetro
-      if(!isEmptyPosLeft(matrix, x-1, y) && isEqual(getValueListOfLists(x-1,y,matrix), color))
+      if(!isEmptyPosRightLeft(matrix, x, y) && isEqual(getValueListOfLists(x,y,matrix), color))
       {
-        getListPosDiagonalLeft(matrix,x-1,y,color,changeSituation(situation)):::List(List(x-1,y))
+        getListPosDiagonalLeft(matrix,x,y+1,color,changeSituation(situation)):::List(List(x,y))
       }
       else Nil
     }
