@@ -9,7 +9,7 @@ object Game{
     showMatrix(matrix,0)
     println("Puntos de la partida: " + executeGame(matrix,0,colors,1))
   }
-  //El
+  //Devuelve los puntos finales de la partida y realiza la ejecución del juego
   def executeGame(matrix:List[List[String]], counter: Int, colors: List[String],step: Int): Int ={
     if(getListFreePositions(matrix,0).!=(0))
     {
