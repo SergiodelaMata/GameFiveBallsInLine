@@ -242,12 +242,12 @@ object Game{
   }
   //Permite obtener el número de cambios en el tablero
   def getMatrixChanges(matrix1: List[List[String]], matrix2: List[List[String]], counter: Int): Int = {
-    if(matrix1.isEmpty) counter
+    if(isEmptyListOfLists(matrix1)) counter
     else getMatrixChanges(matrix1.tail, matrix2, getChangexRowMatrix(matrix1.head, matrix2.head, counter))
   }
   //Permite obtener el número de cambios en una fila del tablero
   def getChangexRowMatrix(lista1: List[String], lista2: List[String], counter: Int): Int = {
-    if(lista1.isEmpty) counter
+    if(isEmptyList(lista1)) counter
     else getChangexRowMatrix(lista1.tail, lista2.tail, setValueCounter(lista1.head, lista2.head, counter))
   }
   //Permite ajustar el valor del contador si es necesario
@@ -258,6 +258,16 @@ object Game{
   //Compara dos elementos son iguales
   def isEqual(value1: String, value2: String): Boolean = {
     if(value1.!=(value2)) false
+    else true
+  }
+  //Verifica si una lista de listas está vacía
+  def isEmptyListOfLists(matrix: List[List[String]]): Boolean ={
+    if(matrix.length.!=(0)) false
+    else true
+  }
+  //Verifica si una lista está vacía
+  def isEmptyList(lista: List[String]): Boolean ={
+    if(lista.length.!=(0)) false
     else true
   }
   //Devuelve el matrix que se va a utilizar para el siguiente paso del juego
