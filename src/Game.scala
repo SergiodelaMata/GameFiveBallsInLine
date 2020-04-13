@@ -86,9 +86,6 @@ object Game{
   }
   //Obtención de un número random en un intervalo
   def random(min:Int, max:Int):Int = { 
-    //val now = Calendar.getInstance()
-    //val currentMinute = now.get(Calendar.SECOND)
-    //val random = new Random(currentSecond)
     val random = scala.util.Random
     val randomAux = random.nextInt(max - min)
     val resultado = randomAux + min
@@ -241,15 +238,26 @@ object Game{
   	paintMatrix(posX,posY,matrix,color)
   }
   //Permite obtener el número de cambios en el tablero
-  def getMatrixChanges(matrix1: List[List[String]], matrix2: List[List[String]], counter: Int): Int = {
-    if(isEmptyListOfLists(matrix1)) counter
-    else getMatrixChanges(matrix1.tail, matrix2, getChangexRowMatrix(matrix1.head, matrix2.head, counter))
+  def getMatrixChanges(matrix1: List[List[String]], matrix2: List[List[String]], position: Int, counter: Int): Int = {
+    val posX = position/9
+    val posY = position%9
+    if(position >= 81)
+    {
+      if(getValueListOfLists(posX,posY,matrix1).!=(getValueListOfLists(posX,posY,matrix2))) getMatrixChanges(matrix1,matrix2,position+1,counter)
+      else getMatrixChanges(matrix1,matrix2,position+1,counter+1)
+    }
+    else counter
+    
+    //if(isEmptyListOfLists(matrix1)) counter
+    //else getMatrixChanges(matrix1.tail, matrix2, getChangexRowMatrix(matrix1.head, matrix2.head, counter))
   }
+  
+  
   //Permite obtener el número de cambios en una fila del tablero
-  def getChangexRowMatrix(lista1: List[String], lista2: List[String], counter: Int): Int = {
+  /*def getChangexRowMatrix(lista1: List[String], lista2: List[String], counter: Int): Int = {
     if(isEmptyList(lista1)) counter
     else getChangexRowMatrix(lista1.tail, lista2.tail, setValueCounter(lista1.head, lista2.head, counter))
-  }
+  }*/
   //Permite ajustar el valor del contador si es necesario
   def setValueCounter(value1: String, value2: String, counter: Int): Int = {
     if(!isEqual(value1, value2)) counter + 1
@@ -261,7 +269,7 @@ object Game{
     else true
   }
   //Verifica si una lista de listas está vacía
-  def isEmptyListOfLists(matrix: List[List[String]]): Boolean ={
+  /*def isEmptyListOfLists(matrix: List[List[String]]): Boolean ={
     if(matrix.length.!=(0)) false
     else true
   }
@@ -269,15 +277,18 @@ object Game{
   def isEmptyList(lista: List[String]): Boolean ={
     if(lista.length.!=(0)) false
     else true
-  }
+  }*/
   //Devuelve el matrix que se va a utilizar para el siguiente paso del juego
   def getMatrixNextStep(initialMatrix: List[List[String]], finalMatrix: List[List[String]], colors: List[String]): List[List[String]] = {
-    if(getMatrixChanges(initialMatrix, finalMatrix, 0).!=(2)) finalMatrix
+    println("Changes")
+    showMatrix(initialMatrix,0)
+    showMatrix(finalMatrix,0)
+    if(getMatrixChanges(initialMatrix, finalMatrix, 0, 0) >= 5) finalMatrix
     else fillMatrix(3, finalMatrix, colors)
   }
   //Realiza la suma de puntos del nuevo paso
   def addPoints(initialMatrix:List[List[String]], finalMatrix:List[List[String]], puntos: Int):Int = {
-    val bolasEliminadas=getMatrixChanges(initialMatrix,finalMatrix,0)
+    val bolasEliminadas=getMatrixChanges(initialMatrix,finalMatrix,0,0)
     if(bolasEliminadas >= 5) puntos + bolasEliminadas*75
   	else puntos
   }
