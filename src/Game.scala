@@ -10,14 +10,9 @@ import java.time.LocalDate
 object Game{
   def main(args: Array[String]): Unit = {
     executeMenu(0)
-    //val colors = "A" :: "N" :: "R" :: "V" :: "M" :: "G" :: Nil //colors de las bolas
-    //val matrix = fillMatrix(9,generateMatrix(9,9),colors)
-    //println("Tablero inicial:")
-    //showMatrix(matrix,0)
-    //println("Puntos de la partida: " + executeGame(matrix,0,colors,1))
   }
   
-  
+  //Ejecuta el menú del juego
   def executeMenu(counter: Int){
     println("Seleccione una de las siguientes opciones:")
     println("1 - Jugar.")
@@ -26,44 +21,37 @@ object Game{
     val value = scala.io.StdIn.readInt()
     value match { //Se compara la opción seleccionada
       case 0 => println("Gracias por jugar.")
-      case 1 => showResult(executeGame(fillMatrix(9,generateMatrix(9,9),getListColors()),1,getListColors(),1))
+      case 1 => showResult(executeGame(fillMatrix(9,generateMatrix(9,9)),1,1))
       case 2 => savePoints(counter)
       case _ => errorOptionSelected(counter: Int)
     }
   }
-    
+  //Se realiza el guardado de los puntos de un jugador en un archivo  
   def savePoints(counter: Int){
     println("Introduzca el nombre del jugador:")
     val name = scala.io.StdIn.readLine()
     val result = "Nombre: " + name + "; Puntos: " + counter
-    val today = java.time.LocalDate.now()
-    val time = Calendar.getInstance()
-    
+    val today = java.time.LocalDate.now() //Obtiene la fecha actual para el archivo
+    val time = Calendar.getInstance() //Obtiene la hora actual para el archivo
     val file = new File("points"+ today + "_"+time.get(Calendar.HOUR_OF_DAY)+"-"+time.get(Calendar.MINUTE)+"-"+time.get(Calendar.SECOND)+".txt")
     val writer = new BufferedWriter(new FileWriter(file,true))
-    //val writer = new PrintWriter(new File("points"+ ".txt"))
     writer.write(result)
     writer.close()
     println("Guardado correctamente.")
     executeMenu(counter)
   }
-    
-  def getListColors():List[String]={
-    "A" :: "N" :: "R" :: "V" :: "M" :: "G" :: Nil
-  }
-    
+  //Muestra un error en relación a la opción seleccionada del menú
   def errorOptionSelected(counter: Int){
     println("Error. No existe la opción seleccionada. Por favor, seleccione otra opción.")
     executeMenu(counter)
   }
-  
+  //Muestra el resultado de la partida
   def showResult(counter: Int){
     println("¡Enhorabuena! ¡Ha obtenido " + counter + "!")
     executeMenu(counter)
   }
-  
   //Devuelve los puntos finales de la partida y realiza la ejecución del juego
-  def executeGame(matrix:List[List[String]], counter: Int, colors: List[String],step: Int): Int ={
+  def executeGame(matrix:List[List[String]], counter: Int,step: Int): Int ={
     if(getListFreePositions(matrix,0).!=(0))
     {
       println("Tablero paso " + step + ":")
@@ -73,11 +61,13 @@ object Game{
       val posFinal = (listPos.tail).head
       val matrixChangePos = paintMatrix(posFinal.head, (posFinal.tail).head, paintMatrix(posInitial.head, (posInitial.tail).head, matrix, "-"), getValueListOfLists(posInitial.head,(posInitial.tail).head,matrix))
       val matrixRemoveLines = paintListPosMatrix(getChanges(posFinal, matrixChangePos),"-",matrixChangePos)
-      //showMatrix(matrixChangePos,0)
-      //showMatrix(matrixRemoveLines,0)
-      executeGame(getMatrixNextStep(matrix, matrixRemoveLines,colors),addPoints(matrix, matrixRemoveLines, counter),colors, step+1)
+      executeGame(getMatrixNextStep(matrix, matrixRemoveLines),addPoints(matrix, matrixRemoveLines, counter),step+1)
     }
     else counter
+  }
+  //Devuelve la lista de colores que se van a usar en el juego
+  def getListColors():List[String]={
+    "A" :: "N" :: "R" :: "V" :: "M" :: "G" :: Nil
   }
   //Obtiene la posición inicial y la posición final para una bola
   def getListPos(matrix:List[List[String]]): List[List[Int]]=
@@ -128,16 +118,13 @@ object Game{
   }
   //Devuelve el valor de una posición de una lista de listas de strings
   def getValueListOfLists(posX: Int, posY: Int, matrix: List[List[String]]): String = {
-    //getValueList(posY, matrix(posX))
     if(posX.!=(0)) getValueListOfLists(posX-1, posY, matrix.tail)
     else getValueList(posY, matrix.head)
   }
   //Devuelve el valor de una posición de una lista de strings
   def getValueList(pos: Int, lista: List[String]): String = {
-    //lista(pos)
     if(pos.!=(0)) getValueList(pos-1, lista.tail)
     else lista.head
-    
   }
   //Devuelve la fila con la que se está trabajando
   def getRow(posX: Int, matrix: List[List[String]]): List[String] = {
@@ -221,11 +208,6 @@ object Game{
   //Comprueba si una posición se encuentra libre por algún camino (derecha, izquierda, arriba o abajo)
   def isFreePos(coordX: Int, coordY: Int, matrix: List[List[String]]): Boolean={
     if((!isOutOfRangePos(coordX,coordY-1) && isEmptyPosUpDown(matrix, coordX,coordY-1))||(!isOutOfRangePos(coordX,coordY+1) && isEmptyPosUpDown(matrix, coordX,coordY+1))||(!isOutOfRangePos(coordX-1,coordY) && isEmptyPosRightLeft(matrix, coordX-1,coordY))||(!isOutOfRangePos(coordX+1,coordY) && isEmptyPosRightLeft(matrix, coordX+1,coordY))) true
-    /*val posUp = !isOutOfRangePos(coordX,coordY-1) && isEmptyPosUpDown(matrix, coordX,coordY-1)
-    val posDown = !isOutOfRangePos(coordX,coordY+1) && isEmptyPosUpDown(matrix, coordX,coordY+1)
-    val posLeft = !isOutOfRangePos(coordX-1,coordY) && isEmptyPosRightLeft(matrix, coordX-1,coordY)
-    val posRight = !isOutOfRangePos(coordX+1,coordY) && isEmptyPosRightLeft(matrix, coordX+1,coordY)
-    if(posUp || posDown || posLeft || posRight) true*/
     else false
   }
   //Comprueba si una posición se encuentra fuera de rango
@@ -240,14 +222,7 @@ object Game{
       else false
     } 
     else true
-  }//Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está por encima de otra
-  /*def isEmptyPosUpDown(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
-    if(coordY>=0){
-      if(isEmptyPosListOfLists(coordX,coordY,matrix)) true
-      else false
-    } 
-    else true
-  }*/
+  }
   //Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está a la derecha de otra
   def isEmptyPosRightLeft(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
     if(coordX<9 && coordX>=0){
@@ -256,17 +231,9 @@ object Game{
     }
     else true    
   }
-  //Comprueba si la posición se encuentra vacía o fuera de rango sabiendo que está a la izquierda de otra
-  /*def isEmptyPosRightLeft(matrix:List[List[String]],coordX:Int,coordY:Int):Boolean={
-    if(coordX>=0){
-      if(isEmptyPosListOfLists(coordX,coordY,matrix)) true
-      else false
-    }
-    else true    
-  }*/
   //Rellena de forma aleatoria el tablero con un número de bolas pasado por parámetro
-  def fillMatrix(numBolas: Int, matrix: List[List[String]], colors : List[String]): List[List[String]] = {
-    if(numBolas != 0) fillMatrix(numBolas - 1, fillRandomPos(matrix, getValueList(random(0, colors.length), colors)), colors)
+  def fillMatrix(numBolas: Int, matrix: List[List[String]]): List[List[String]] = {
+    if(numBolas != 0) fillMatrix(numBolas - 1, fillRandomPos(matrix, getValueList(random(0, getListColors().length), getListColors())))
     else matrix
   }
   //Rellena una posición del tablero de forma aleatoria
@@ -304,25 +271,7 @@ object Game{
   //Permite obtener el número de cambios en el tablero
   def getMatrixChanges(matrix1: List[List[String]], matrix2: List[List[String]], position: Int, counter: Int): Int = {
     getListFreePositions(matrix2,0).length - getListFreePositions(matrix1,0).length
-    /*val posX = position/9
-    val posY = position%9
-    if(position >= 81)
-    {
-      if(getValueListOfLists(posX,posY,matrix1).!=(getValueListOfLists(posX,posY,matrix2))) getMatrixChanges(matrix1,matrix2,position+1,counter)
-      else getMatrixChanges(matrix1,matrix2,position+1,counter+1)
-    }
-    else counter
-    */
-    //if(isEmptyListOfLists(matrix1)) counter
-    //else getMatrixChanges(matrix1.tail, matrix2, getChangexRowMatrix(matrix1.head, matrix2.head, counter))
   }
-  
-  
-  //Permite obtener el número de cambios en una fila del tablero
-  /*def getChangexRowMatrix(lista1: List[String], lista2: List[String], counter: Int): Int = {
-    if(isEmptyList(lista1)) counter
-    else getChangexRowMatrix(lista1.tail, lista2.tail, setValueCounter(lista1.head, lista2.head, counter))
-  }*/
   //Permite ajustar el valor del contador si es necesario
   def setValueCounter(value1: String, value2: String, counter: Int): Int = {
     if(!isEqual(value1, value2)) counter + 1
@@ -333,24 +282,10 @@ object Game{
     if(value1.!=(value2)) false
     else true
   }
-  //Verifica si una lista de listas está vacía
-  /*def isEmptyListOfLists(matrix: List[List[String]]): Boolean ={
-    if(matrix.length.!=(0)) false
-    else true
-  }
-  //Verifica si una lista está vacía
-  def isEmptyList(lista: List[String]): Boolean ={
-    if(lista.length.!=(0)) false
-    else true
-  }*/
   //Devuelve el matrix que se va a utilizar para el siguiente paso del juego
-  def getMatrixNextStep(initialMatrix: List[List[String]], finalMatrix: List[List[String]], colors: List[String]): List[List[String]] = {
-    //println("Changes")
-    //showMatrix(initialMatrix,0)
-    //showMatrix(finalMatrix,0)
-    //println(getMatrixChanges(initialMatrix, finalMatrix, 0, 0))
+  def getMatrixNextStep(initialMatrix: List[List[String]], finalMatrix: List[List[String]]): List[List[String]] = {
     if(getMatrixChanges(initialMatrix, finalMatrix, 0, 0) >= 5) finalMatrix
-    else fillMatrix(3, finalMatrix, colors)
+    else fillMatrix(3, finalMatrix)
   }
   //Realiza la suma de puntos del nuevo paso
   def addPoints(initialMatrix:List[List[String]], finalMatrix:List[List[String]], puntos: Int):Int = {
@@ -371,7 +306,6 @@ object Game{
   }
   //Devuelve la lista de posiciones que se deben modificar
   def getChanges(position: List[Int], matriz: List[List[String]]): List[List[Int]] = {
-    //val listaModificacionesFilaYColumna = List(position) ::: getChangesRow(position, matriz(position.head)) ::: getChangesColumn(position, matriz)
     val listaModificacionesFilaYColumna = introducePosition(getChangesRow(position, matriz(position.head)) ::: getChangesColumn(position, matriz), position)
     println(getListPosDiagonals(matriz, 0,listaModificacionesFilaYColumna))
     getListPosDiagonals(matriz, 0,listaModificacionesFilaYColumna)
@@ -502,10 +436,8 @@ object Game{
   }
   //Devuelve la lista de las posiciones de las bolas seguidas en cada una de las diagonales de todo el tablero
   def getListPosDiagonals(matrix:List[List[String]], position:Int, listPositions : List[List[Int]]):List[List[Int]]={
-    //println("MIAU")
     val coordX = position / 9
     val coordY = position % 9
-    //println("coordX " + coordX + " coordY " + coordY)
     if(position < 81){
       if(isEmptyPosListOfLists(coordX, coordY, matrix)) getListPosDiagonals(matrix,position+1, listPositions)
       else
@@ -516,32 +448,24 @@ object Game{
          * 0 1 1
          * 0 0 1
          * */
-        //println("diagonalRight1")
-        //println(diagonalRight1)
         val diagonalRight2 = introducePosition(getListPosDiagonalRight(matrix,coordX,coordY+1, getValueListOfLists(coordX,coordY,matrix),true),List(coordX,coordY))
         /*
          * 1 0 0
          * 1 1 0
          * 0 1 1
          * */
-        //println("diagonalRight2")
-        //println(diagonalRight2)
         val diagonalLeft1 = introducePosition(getListPosDiagonalLeft(matrix,coordX-1,coordY, getValueListOfLists(coordX,coordY,matrix),false),List(coordX,coordY))
         /*
          * 0 1 1
          * 1 1 0
          * 1 0 0
          * */
-        //println("diagonalLeft1")
-        //println(diagonalLeft1)
         val diagonalLeft2 = introducePosition(getListPosDiagonalLeft(matrix,coordX,coordY+1, getValueListOfLists(coordX,coordY,matrix),true),List(coordX,coordY))
         /*
          * 0 0 1
          * 0 1 1
          * 1 1 0
          * */
-        //println("diagonalLeft2")
-        //println(diagonalLeft2)
         val listPos = introduceDiagonal(diagonalLeft2,introduceDiagonal(diagonalLeft1,introduceDiagonal(diagonalRight2,introduceDiagonal(diagonalRight1, listPositions))))
         getListPosDiagonals(matrix, position+1, listPos)
       }  
