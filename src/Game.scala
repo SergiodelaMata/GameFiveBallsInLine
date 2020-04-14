@@ -9,6 +9,8 @@ object Game{
     showMatrix(matrix,0)
     println("Puntos de la partida: " + executeGame(matrix,0,colors,1))
   }
+  
+  
   //Devuelve los puntos finales de la partida y realiza la ejecución del juego
   def executeGame(matrix:List[List[String]], counter: Int, colors: List[String],step: Int): Int ={
     if(getListFreePositions(matrix,0).!=(0))
@@ -32,7 +34,11 @@ object Game{
     val posInicial = pedirPosInicial(matrix)
     val posFinal = pedirPosFinal(matrix)
     if(isPath(posInicial,posFinal,matrix,0)) List(posInicial,posFinal)
-    else getListPos(matrix)
+    else
+    {
+      println("Error. No hay camino entre las posiciones indicadas. Introduzca otras posiciones.")
+      getListPos(matrix)
+    }
   }
   //Genera una matriz de posiciones vacías
   def generateMatrix(numFilas: Int, numColumnas: Int): List[List[String]] ={
@@ -100,9 +106,11 @@ object Game{
   }
   //Pide las coordenadas de la posición inicial
   def pedirPosInicial(matrix: List[List[String]]):List[Int] = {
-    println("Introduce la posión inicial en la coordenada X:")
+    println("Posición Inicial:")
+    println("Introduzca posiciones cuyos valores en cada coordenada esté entorno al 0 y el 8.")
+    println("Introduce su coordenada X:")
     val posX = scala.io.StdIn.readInt()
-    println("Introduce la posión inicial en la coordenada Y:")
+    println("Introduce su coordenada Y:")
     val posY = scala.io.StdIn.readInt()
     if(posX < 0 || posX > 8 || posY < 0 || posY > 8 || isEmptyPosListOfLists(posX, posY, matrix))
     {
@@ -116,9 +124,11 @@ object Game{
   }
   //Pide las coordenadas de la posición final
   def pedirPosFinal(matrix: List[List[String]]):List[Int] = {
-    println("Introduce la posición final en la coordenada X:")
+    println("Posición Final:")
+    println("Introduzca posiciones cuyos valores en cada coordenada esté entorno al 0 y el 8.")
+    println("Introduce su coordenada X:")
     val posX = scala.io.StdIn.readInt()
-    println("Introduce la posición final en la coordenada Y:")
+    println("Introduce su coordenada Y:")
     val posY = scala.io.StdIn.readInt()
     if(posX < 0 || posX > 8 || posY < 0 || posY > 8 || !isEmptyPosListOfLists(posX, posY, matrix))
     {
@@ -312,8 +322,8 @@ object Game{
   def getChanges(position: List[Int], matriz: List[List[String]]): List[List[Int]] = {
     //val listaModificacionesFilaYColumna = List(position) ::: getChangesRow(position, matriz(position.head)) ::: getChangesColumn(position, matriz)
     val listaModificacionesFilaYColumna = introducePosition(getChangesRow(position, matriz(position.head)) ::: getChangesColumn(position, matriz), position)
-    println(getListPosDiagonals(matriz, position.head + position.tail.head * 9,listaModificacionesFilaYColumna))
-    getListPosDiagonals(matriz, position.head + position.tail.head * 9,listaModificacionesFilaYColumna)
+    println(getListPosDiagonals(matriz, 0,listaModificacionesFilaYColumna))
+    getListPosDiagonals(matriz, 0,listaModificacionesFilaYColumna)
   }
   //Introduce la posición actual si hay más posiciones en la lista de posiciones 
   def introducePosition(listPos: List[List[Int]], position: List[Int]): List[List[Int]]={
@@ -444,6 +454,7 @@ object Game{
     //println("MIAU")
     val coordX = position / 9
     val coordY = position % 9
+    println("coordX " + coordX + " coordY " + coordY)
     if(position < 81){
       if(isEmptyPosListOfLists(coordX, coordY, matrix)) getListPosDiagonals(matrix,position+1, listPositions)
       else
@@ -454,13 +465,15 @@ object Game{
          * 0 1 1
          * 0 0 1
          * */
-        //println(diagonalRight1)
+        println("diagonalRight1")
+        println(diagonalRight1)
         val diagonalRight2 = introducePosition(getListPosDiagonalRight(matrix,coordX,coordY+1, getValueListOfLists(coordX,coordY,matrix),true),List(coordX,coordY))
         /*
          * 1 0 0
          * 1 1 0
          * 0 1 1
          * */
+        println("diagonalRight2")
         println(diagonalRight2)
         val diagonalLeft1 = introducePosition(getListPosDiagonalLeft(matrix,coordX-1,coordY, getValueListOfLists(coordX,coordY,matrix),false),List(coordX,coordY))
         /*
@@ -468,13 +481,15 @@ object Game{
          * 1 1 0
          * 1 0 0
          * */
-        //println(diagonalLeft1)
+        println("diagonalLeft1")
+        println(diagonalLeft1)
         val diagonalLeft2 = introducePosition(getListPosDiagonalLeft(matrix,coordX,coordY+1, getValueListOfLists(coordX,coordY,matrix),true),List(coordX,coordY))
         /*
          * 0 0 1
          * 0 1 1
          * 1 1 0
          * */
+        println("diagonalLeft2")
         println(diagonalLeft2)
         val listPos = introduceDiagonal(diagonalLeft2,introduceDiagonal(diagonalLeft1,introduceDiagonal(diagonalRight2,introduceDiagonal(diagonalRight1, listPositions))))
         getListPosDiagonals(matrix, position+1, listPos)
