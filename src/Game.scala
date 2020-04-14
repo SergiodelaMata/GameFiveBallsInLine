@@ -1,15 +1,66 @@
 import scala.util.Random
+import scala.io.Source
+import java.io.File
+import java.io._
+import java.util.Calendar
+import java.time.LocalDate
+
 
 //object Game extends App{
 object Game{
   def main(args: Array[String]): Unit = {
-    val colors = "A" :: "N" :: "R" :: "V" :: "M" :: "G" :: Nil //colors de las bolas
-    val matrix = fillMatrix(9,generateMatrix(9,9),colors)
-    println("Tablero inicial:")
-    showMatrix(matrix,0)
-    println("Puntos de la partida: " + executeGame(matrix,0,colors,1))
+    executeMenu(0)
+    //val colors = "A" :: "N" :: "R" :: "V" :: "M" :: "G" :: Nil //colors de las bolas
+    //val matrix = fillMatrix(9,generateMatrix(9,9),colors)
+    //println("Tablero inicial:")
+    //showMatrix(matrix,0)
+    //println("Puntos de la partida: " + executeGame(matrix,0,colors,1))
   }
   
+  
+  def executeMenu(counter: Int){
+    println("Seleccione una de las siguientes opciones:")
+    println("1 - Jugar.")
+    println("2 - Guardar puntuación.")
+    println("0 - Salir.")
+    val value = scala.io.StdIn.readInt()
+    value match { //Se compara la opción seleccionada
+      case 0 => println("Gracias por jugar.")
+      case 1 => showResult(executeGame(fillMatrix(9,generateMatrix(9,9),getListColors()),1,getListColors(),1))
+      case 2 => savePoints(counter)
+      case _ => errorOptionSelected(counter: Int)
+    }
+  }
+    
+  def savePoints(counter: Int){
+    println("Introduzca el nombre del jugador:")
+    val name = scala.io.StdIn.readLine()
+    val result = "Nombre: " + name + "; Puntos: " + counter
+    val today = java.time.LocalDate.now()
+    val time = Calendar.getInstance()
+    
+    val file = new File("points"+ today + "_"+time.get(Calendar.HOUR_OF_DAY)+"-"+time.get(Calendar.MINUTE)+"-"+time.get(Calendar.SECOND)+".txt")
+    val writer = new BufferedWriter(new FileWriter(file,true))
+    //val writer = new PrintWriter(new File("points"+ ".txt"))
+    writer.write(result)
+    writer.close()
+    println("Guardado correctamente.")
+    executeMenu(counter)
+  }
+    
+  def getListColors():List[String]={
+    "A" :: "N" :: "R" :: "V" :: "M" :: "G" :: Nil
+  }
+    
+  def errorOptionSelected(counter: Int){
+    println("Error. No existe la opción seleccionada. Por favor, seleccione otra opción.")
+    executeMenu(counter)
+  }
+  
+  def showResult(counter: Int){
+    println("¡Enhorabuena! ¡Ha obtenido " + counter + "!")
+    executeMenu(counter)
+  }
   
   //Devuelve los puntos finales de la partida y realiza la ejecución del juego
   def executeGame(matrix:List[List[String]], counter: Int, colors: List[String],step: Int): Int ={
