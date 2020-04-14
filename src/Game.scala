@@ -454,7 +454,7 @@ object Game{
     //println("MIAU")
     val coordX = position / 9
     val coordY = position % 9
-    println("coordX " + coordX + " coordY " + coordY)
+    //println("coordX " + coordX + " coordY " + coordY)
     if(position < 81){
       if(isEmptyPosListOfLists(coordX, coordY, matrix)) getListPosDiagonals(matrix,position+1, listPositions)
       else
@@ -465,32 +465,32 @@ object Game{
          * 0 1 1
          * 0 0 1
          * */
-        println("diagonalRight1")
-        println(diagonalRight1)
+        //println("diagonalRight1")
+        //println(diagonalRight1)
         val diagonalRight2 = introducePosition(getListPosDiagonalRight(matrix,coordX,coordY+1, getValueListOfLists(coordX,coordY,matrix),true),List(coordX,coordY))
         /*
          * 1 0 0
          * 1 1 0
          * 0 1 1
          * */
-        println("diagonalRight2")
-        println(diagonalRight2)
+        //println("diagonalRight2")
+        //println(diagonalRight2)
         val diagonalLeft1 = introducePosition(getListPosDiagonalLeft(matrix,coordX-1,coordY, getValueListOfLists(coordX,coordY,matrix),false),List(coordX,coordY))
         /*
          * 0 1 1
          * 1 1 0
          * 1 0 0
          * */
-        println("diagonalLeft1")
-        println(diagonalLeft1)
+        //println("diagonalLeft1")
+        //println(diagonalLeft1)
         val diagonalLeft2 = introducePosition(getListPosDiagonalLeft(matrix,coordX,coordY+1, getValueListOfLists(coordX,coordY,matrix),true),List(coordX,coordY))
         /*
          * 0 0 1
          * 0 1 1
          * 1 1 0
          * */
-        println("diagonalLeft2")
-        println(diagonalLeft2)
+        //println("diagonalLeft2")
+        //println(diagonalLeft2)
         val listPos = introduceDiagonal(diagonalLeft2,introduceDiagonal(diagonalLeft1,introduceDiagonal(diagonalRight2,introduceDiagonal(diagonalRight1, listPositions))))
         getListPosDiagonals(matrix, position+1, listPos)
       }  
