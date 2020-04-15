@@ -5,13 +5,11 @@ import java.io._
 import java.util.Calendar
 import java.time.LocalDate
 
-
 //object Game extends App{
 object Game{
   def main(args: Array[String]): Unit = {
     executeMenu(0)
   }
-  
   //Ejecuta el menú del juego
   def executeMenu(counter: Int){
     println("Seleccione una de las siguientes opciones:")
@@ -75,7 +73,7 @@ object Game{
   {
     val posInicial = pedirPosInicial(matrix)
     val posFinal = pedirPosFinal(matrix)
-    if(isPath(posInicial,posFinal,matrix,0,false)) List(posInicial,posFinal)
+    if(isPath(posInicial,posFinal,matrix,0)) List(posInicial,posFinal)
     else
     {
       println("Movimiento Inválido. No hay camino entre las posiciones indicadas. Introduzca otras posiciones.")
@@ -180,25 +178,25 @@ object Game{
     }
   }
   //Verifica la existencia de un camino entre dos posiciones
-  def isPath(posInitial: List[Int],posFinal: List[Int], matrix: List[List[String]],counter: Int, verify : Boolean): Boolean ={
+  def isPath(posInitial: List[Int],posFinal: List[Int], matrix: List[List[String]],counter: Int): Boolean ={
     if(counter <150 &&((!(posInitial.head.!=(posFinal.head) && !(!(posInitial.tail).head.!=((posFinal.tail).head))))||(isFreePos(posInitial.head, (posInitial.tail).head, matrix) && isFreePos(posFinal.head, (posFinal.tail).head, matrix))))
     {
       if(!(posInitial.head.!=(posFinal.head) && !(!(posInitial.tail).head.!=((posFinal.tail).head))))
       {
-        verify
+        true
       }
       else
       {
-        if(isPath(List(posInitial.head,(posInitial.tail).head-1), posFinal,matrix,counter+1,true)) true
+        if(isPath(List(posInitial.head,(posInitial.tail).head-1), posFinal,matrix,counter+1)) true
         else
         {
-          if(isPath(List(posInitial.head,(posInitial.tail).head+1), posFinal,matrix,counter+1,true)) true
+          if(isPath(List(posInitial.head,(posInitial.tail).head+1), posFinal,matrix,counter+1)) true
           else
           {
-            if(isPath(List(posInitial.head-1,(posInitial.tail).head), posFinal,matrix,counter+1,true)) true
+            if(isPath(List(posInitial.head-1,(posInitial.tail).head), posFinal,matrix,counter+1)) true
             else
             {
-              isPath(List(posInitial.head+1,(posInitial.tail).head), posFinal,matrix,counter+1,true)
+              isPath(List(posInitial.head+1,(posInitial.tail).head), posFinal,matrix,counter+1)
             }
           }
         }
@@ -296,19 +294,14 @@ object Game{
   }
   //Muestra predicción de posibles posiciones a poder seleccionar
   def showOptimization(matrix: List[List[String]]){
-    //val matrixAux = getListBestPosColor(matrix, 0)
-    //println(matrixAux)
     val listPos = getListBestPosColorWithPath(matrix, getListBestPosColor(matrix, 0))
-    //println(listPos)
-    val maxValue = this.getMaxNumBalls(listPos, 0)
-    println("MAX VALUE: " + maxValue)
-    if(listPos.length.!=(0)) showListBestPosListOfLists(listPos, 5, (maxValue*0.5).toInt, maxValue)
+    val maxValue = getMaxNumBalls(listPos, 0)
+    if(listPos.length.!=(0)) showListBestPosListOfLists(listPos, listPos.length, (maxValue*0.5).toInt, maxValue)
     else println("Selecciona cualquier casilla de las que quedan libres.")
     
   }
   //Muestra listas de las mejores posiciones en relación al contador de posiciones a mostrar y los márgenes entre los que se trabajan
   def showListBestPosListOfLists(listPos: List[List[Int]], counter: Int, minValue: Int, maxValue: Int){
-    println("VALUES: " + minValue + " " + maxValue)
     if(listPos.length.!=(0) && counter.!=(0) && minValue <= maxValue) showListBestPosListOfLists(listPos, showListBestPos(getPositionInRange(listPos, maxValue, maxValue),counter), minValue, maxValue-1)
     else println()
   }
@@ -376,10 +369,12 @@ object Game{
   def isPathOptimized(matrix: List[List[String]], pos: List[Int], position: Int): Boolean={
     val coordX = position / 9
     val coordY = position % 9
-    val posColor = ((pos.tail).tail).head
+    val posColor = (((pos.tail).tail).tail).head
     if(position < 81){
-      if(!getValueListOfLists(coordX, coordY, matrix).!=("-") || !isEqual(getValueListOfLists(coordX, coordY, matrix),getValueList(posColor,getListColors())) || !isPath(List(coordX,coordY), List(pos.head, (pos.tail).head), matrix, 0,false)) isPathOptimized(matrix,pos,position+1)
-      else true
+      if(!getValueListOfLists(pos.head, (pos.tail).head, matrix).!=("-") && getValueListOfLists(coordX, coordY, matrix).!=("-") && isEqual(getValueListOfLists(coordX, coordY, matrix),getValueList(posColor,getListColors())) && isPath(List(coordX,coordY), List(pos.head, (pos.tail).head), matrix, 0)) true
+      //if(!getValueListOfLists(coordX, coordY, matrix).!=("-") || getValueListOfLists(pos.head, (pos.tail).head, matrix).!=("-") || !isEqual(getValueListOfLists(coordX, coordY, matrix),getValueList(posColor,getListColors())) || !isPath(List(coordX,coordY), List(pos.head, (pos.tail).head), matrix, 0)) isPathOptimized(matrix,pos,position+1)
+      //else true
+      else isPathOptimized(matrix,pos,position+1)
     }
     else false
   }
@@ -389,12 +384,8 @@ object Game{
     val coordY = position % 9
     if(position < 81){
       val listPosRow = getListRowPosColor(matrix, coordX, coordY, 0)
-      //println(listPosRow)
       val listPosCol = getListColumnPosColor(matrix, coordX, coordY, 0)
-      //println(listPosCol)
       val listPosDiag = getListDiagonalPosColor(matrix, coordX, coordY, 0)
-      //println(listPosDiag)
-      //println(joinLists(listPosRow,joinLists(listPosCol, listPosDiag)))
       joinLists(listPosRow,joinLists(listPosCol, listPosDiag)) ::: getListBestPosColor(matrix, position+1)
     }
     else Nil
@@ -428,9 +419,9 @@ object Game{
     if(posColor < getListColors().length)
     {
       //Obtiene la lista de posiciones junto con el número de bolas que tendría y el color que tendría dicha posición 
-      val numBallsRow = getBallsRow(List(coordX,coordY), getRow(coordX,paintMatrix(coordX, coordY, matrix, getValueList(posColor,getListColors()))))
+      val numBallsRow = getBallsRow(List(coordX,coordY), getRow(coordX,paintMatrix(coordX, coordY, matrix, getValueList(posColor,getListColors()))))-1
       //Separación de los casos que no tienen ninguna bola a sus lados del mismo color de los casos que sí
-      if(numBallsRow>0) List(List(coordX, coordY, numBallsRow-1, posColor)) ::: getListRowPosColor(matrix, coordX,coordY, posColor+1)
+      if(numBallsRow>0) List(List(coordX, coordY, numBallsRow, posColor)) ::: getListRowPosColor(matrix, coordX,coordY, posColor+1)
       else getListRowPosColor(matrix, coordX,coordY, posColor+1)
     }
     else Nil
@@ -440,9 +431,9 @@ object Game{
     if(posColor < getListColors().length)
     {
       //Obtiene la lista de posiciones junto con el número de bolas que tendría y el color que tendría dicha posición 
-      val numBallsCol = getBallsColumn(List(coordX,coordY), paintMatrix(coordX, coordY, matrix, getValueList(posColor,getListColors())))
+      val numBallsCol = getBallsColumn(List(coordX,coordY), paintMatrix(coordX, coordY, matrix, getValueList(posColor,getListColors())))-1
       //Separación de los casos que no tienen ninguna bola por encima o por debajo del mismo color de los casos que sí
-      if(numBallsCol>0) List(List(coordX, coordY, numBallsCol-1, posColor))  ::: getListColumnPosColor(matrix, coordX,coordY, posColor+1)
+      if(numBallsCol>0) List(List(coordX, coordY, numBallsCol, posColor))  ::: getListColumnPosColor(matrix, coordX,coordY, posColor+1)
       else getListColumnPosColor(matrix, coordX,coordY, posColor+1)
     }
     else Nil
@@ -461,9 +452,15 @@ object Game{
   }
   //Obtiene el número de bolas que tienen el mismo color alrededor de una posición
   def getNumberBallsAroundEqualColor(matrix:List[List[String]], coordX: Int, coordY: Int, posColor: Int): Int ={
-    isValid(coordX-1,coordY-1,getValueList(posColor, getListColors()),matrix) + isValid(coordX-1,coordY,getValueList(posColor, getListColors()),matrix) + isValid(coordX-1,coordY+1,getValueList(posColor, getListColors()),matrix) 
-    + isValid(coordX,coordY-1,getValueList(posColor, getListColors()),matrix) + isValid(coordX,coordY+1,getValueList(posColor, getListColors()),matrix)
-    + isValid(coordX+1,coordY-1,getValueList(posColor, getListColors()),matrix) + isValid(coordX+1,coordY,getValueList(posColor, getListColors()),matrix) + isValid(coordX+1,coordY+1,getValueList(posColor, getListColors()),matrix)
+    val pos1 = isValid(coordX-1,coordY-1,getValueList(posColor, getListColors()),matrix)
+    val pos2 = isValid(coordX-1,coordY,getValueList(posColor, getListColors()),matrix)
+    val pos3 = isValid(coordX-1,coordY+1,getValueList(posColor, getListColors()),matrix) 
+    val pos4 = isValid(coordX,coordY-1,getValueList(posColor, getListColors()),matrix)
+    val pos5 = isValid(coordX,coordY+1,getValueList(posColor, getListColors()),matrix)
+    val pos6 = isValid(coordX+1,coordY-1,getValueList(posColor, getListColors()),matrix)
+    val pos7 = isValid(coordX+1,coordY,getValueList(posColor, getListColors()),matrix)
+    val pos8 = isValid(coordX+1,coordY+1,getValueList(posColor, getListColors()),matrix)
+    pos1 + pos2 + pos3 + pos4 + pos5 + pos6 + pos7 + pos8
   }
   //Devuelve un valor en relación a si dos valores son iguales y no las coordenadas de la posición están en los rango de la matriz
   def isValid(coordX: Int, coordY: Int, color: String, matrix: List[List[String]]): Int={
@@ -473,7 +470,6 @@ object Game{
   //Devuelve la lista de posiciones que se deben modificar
   def getChanges(position: List[Int], matrix: List[List[String]]): List[List[Int]] = {
     val listModRowCol = introducePosition(getChangesRow(position, matrix(position.head)) ::: getChangesColumn(position, matrix), position)
-    //println(getListPosDiagonals(matrix, 0,listModRowCol))
     getListPosDiagonals(matrix, 0,listModRowCol)
   }
   //Introduce la posición actual si hay más posiciones en la lista de posiciones 
