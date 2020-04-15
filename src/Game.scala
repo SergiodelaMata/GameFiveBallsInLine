@@ -75,7 +75,7 @@ object Game{
   {
     val posInicial = pedirPosInicial(matrix)
     val posFinal = pedirPosFinal(matrix)
-    if(isPath(posInicial,posFinal,matrix,0)) List(posInicial,posFinal)
+    if(isPath(posInicial,posFinal,matrix,0,false)) List(posInicial,posFinal)
     else
     {
       println("Movimiento Inválido. No hay camino entre las posiciones indicadas. Introduzca otras posiciones.")
@@ -180,25 +180,25 @@ object Game{
     }
   }
   //Verifica la existencia de un camino entre dos posiciones
-  def isPath(posInitial: List[Int],posFinal: List[Int], matrix: List[List[String]],counter: Int): Boolean ={
+  def isPath(posInitial: List[Int],posFinal: List[Int], matrix: List[List[String]],counter: Int, verify : Boolean): Boolean ={
     if(counter <150 &&((!(posInitial.head.!=(posFinal.head) && !(!(posInitial.tail).head.!=((posFinal.tail).head))))||(isFreePos(posInitial.head, (posInitial.tail).head, matrix) && isFreePos(posFinal.head, (posFinal.tail).head, matrix))))
     {
       if(!(posInitial.head.!=(posFinal.head) && !(!(posInitial.tail).head.!=((posFinal.tail).head))))
       {
-        true
+        verify
       }
       else
       {
-        if(isPath(List(posInitial.head,(posInitial.tail).head-1), posFinal,matrix,counter+1)) true
+        if(isPath(List(posInitial.head,(posInitial.tail).head-1), posFinal,matrix,counter+1,true)) true
         else
         {
-          if(isPath(List(posInitial.head,(posInitial.tail).head+1), posFinal,matrix,counter+1)) true
+          if(isPath(List(posInitial.head,(posInitial.tail).head+1), posFinal,matrix,counter+1,true)) true
           else
           {
-            if(isPath(List(posInitial.head-1,(posInitial.tail).head), posFinal,matrix,counter+1)) true
+            if(isPath(List(posInitial.head-1,(posInitial.tail).head), posFinal,matrix,counter+1,true)) true
             else
             {
-              isPath(List(posInitial.head+1,(posInitial.tail).head), posFinal,matrix,counter+1)
+              isPath(List(posInitial.head+1,(posInitial.tail).head), posFinal,matrix,counter+1,true)
             }
           }
         }
@@ -378,7 +378,7 @@ object Game{
     val coordY = position % 9
     val posColor = ((pos.tail).tail).head
     if(position < 81){
-      if(!getValueListOfLists(coordX, coordY, matrix).!=("-") || !isEqual(getValueListOfLists(coordX, coordY, matrix),getValueList(posColor,getListColors())) || !isPath(List(coordX,coordY), List(pos.head, (pos.tail).head), matrix, 0)) isPathOptimized(matrix,pos,position+1)
+      if(!getValueListOfLists(coordX, coordY, matrix).!=("-") || !isEqual(getValueListOfLists(coordX, coordY, matrix),getValueList(posColor,getListColors())) || !isPath(List(coordX,coordY), List(pos.head, (pos.tail).head), matrix, 0,false)) isPathOptimized(matrix,pos,position+1)
       else true
     }
     else false
