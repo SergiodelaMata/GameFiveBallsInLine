@@ -7,7 +7,7 @@ import java.time.LocalDate
 
 object Game{
   def main(args: Array[String]): Unit = {
-    showResult(executeGame(fillMatrix(9,generateMatrix(9,9)),1,1))
+    showResult(executeGame(fillMatrix(9,generateMatrix(9,9)),0,1))
   }
   //Ejecuta el menú del juego
   def executeMenu(counter: Int){

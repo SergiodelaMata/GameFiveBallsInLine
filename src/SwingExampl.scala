@@ -671,7 +671,7 @@ object SwingExampl extends App {
       } else {
         presionar2(i)
       }
-      print(jLabels(i))
+      
 
     }
   })
@@ -683,17 +683,14 @@ object SwingExampl extends App {
   jButton2.addActionListener(new ActionListener {
     override def actionPerformed(e: ActionEvent): Unit = {
       val i = 1; // i es siempre 1 menos que el jbutton
-       println("Soy el 2");
       if (presionado == false) {
         presionar1(i)
-        println("lo primero que quiero ver i/9 = "+ i/9);
-        println("lo primero que quiero ver i%9 = "+ i%9);
       } else {
         
         presionar2(i)
       }
 
-      print(jLabels(i))
+      
     }
   })
 
@@ -704,17 +701,14 @@ object SwingExampl extends App {
   jButton3.addActionListener(new ActionListener {
     override def actionPerformed(e: ActionEvent): Unit = {
       val i = 2; // i es siempre 1 menos que el jbutton
-      println("Soy el 3");  
       if (presionado == false) {
         presionar1(i)
-        println("lo primero que quiero ver i/9 = "+ i/9);
-        println("lo primero que quiero ver i%9 = "+ i%9);
       } else {
         
         presionar2(i)
       }
 
-      print(jLabels(i))
+      
     }
   })
 
@@ -728,14 +722,12 @@ object SwingExampl extends App {
      
       if (presionado == false) {
         presionar1(i)
-        println("lo primero que quiero ver i/9 = "+ i/9);
-        println("lo primero que quiero ver i%9 = "+ i%9);
       } else {
         
         presionar2(i)
       }
 
-      print(jLabels(i))
+      
     }
   })
 
@@ -754,7 +746,7 @@ object SwingExampl extends App {
         presionar2(i)
       }
 
-      print(jLabels(i))
+      
     }
   })
 
@@ -773,7 +765,7 @@ object SwingExampl extends App {
         presionar2(i)
       }
 
-      print(jLabels(i))
+      
     }
   })
 
@@ -784,15 +776,12 @@ object SwingExampl extends App {
   jButton7.addActionListener(new ActionListener {
     override def actionPerformed(e: ActionEvent): Unit = {
       val i = 6; // i es siempre 1 menos que el jbutton
-  println("Soy el 7"); 
       if (presionado == false) {
         presionar1(i)
       } else {
         
         presionar2(i)
       }
-      print(jLabels(i))
-
     }
   })
 
@@ -811,7 +800,7 @@ object SwingExampl extends App {
         presionar2(i)
       }
 
-      print(jLabels(i))
+      
     }
   })
 
@@ -858,7 +847,6 @@ object SwingExampl extends App {
   jButton11.addActionListener(new ActionListener {
     override def actionPerformed(e: ActionEvent): Unit = {
       val i = 10; // i es siempre 1 menos que el jbutton
-      println("Soy el 11"); 
       if (presionado == false) {
         presionar1(i)
       } else {
@@ -1005,8 +993,6 @@ object SwingExampl extends App {
 
       if (presionado == false) {
         presionar1(i)
-          println("lo primero que quiero ver i/9 = "+ i/9);
-        println("lo primero que quiero ver i%9 = "+ i%9);
       } else {
         
         presionar2(i)
@@ -2063,7 +2049,6 @@ object SwingExampl extends App {
   jButton80.addActionListener(new ActionListener {
     override def actionPerformed(e: ActionEvent): Unit = {
       val i = 79; // i es siempre 1 menos que el jbutton
-        println("Soy el 80"); 
       if (presionado == false) {
         presionar1(i)
       } else {
@@ -2081,7 +2066,6 @@ object SwingExampl extends App {
   jButton81.addActionListener(new ActionListener {
     override def actionPerformed(e: ActionEvent): Unit = {
       val i = 80; // i es siempre 1 menos que el jbutton
-    println("Soy el 81"); 
       if (presionado == false) {
         presionar1(i)
       } else {
@@ -2274,9 +2258,7 @@ object SwingExampl extends App {
   def presionar1(i: Int) = {
     if (!imgRedimensionadaBlanca.toString().equals(getValueListForLabels(i, jLabels).getIcon().toString())) {
       temporalLabel = i 
-      println(presionado)
       presionado = changeSituation(presionado)
-      println(presionado)
     } else {
       println("Repita la jugada");
     }
