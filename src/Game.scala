@@ -162,9 +162,10 @@ object Game{
   //Pide las coordenadas de la posición inicial
   def pedirPosInicial(matrix: List[List[String]]):List[Int] = {
     
-    while(SwingExampl.getPresionadoState()==false)
+    if(SwingExampl.getPresionadoState()==false)
     {
       Thread.sleep(200);
+      pedirPosInicial(matrix)
     }
   
     val coordenada = SwingExampl.getTemporalLabel();
@@ -183,14 +184,13 @@ object Game{
   }
   //Pide las coordenadas de la posición final
   def pedirPosFinal(matrix: List[List[String]]):List[Int] = {
-    while(SwingExampl.getPresionadoState()==true)
+    if(SwingExampl.getPresionadoState()==true)
     {
       Thread.sleep(200);
+      pedirPosFinal(matrix)
     }
     val coordenada = SwingExampl.getTemporalLabel();
-    println(coordenada)
     val posX = coordenada/9;
-   
     val posY = coordenada%9;
     
     if(posX < 0 || posX > 8 || posY < 0 || posY > 8 || !isEmptyPosListOfLists(posX, posY, matrix))
